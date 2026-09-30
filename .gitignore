@@ -1,0 +1,18 @@
+# RouterOS exports and backups
+*.rsc
+*.backup
+*.supout.rif
+
+# Captures, logs, and local secrets
+*.pcap
+*.pcapng
+*.log
+.env
+.env.*
+!.env.example
+secrets/
+private/
+
+# Editor and OS files
+.DS_Store
+Thumbs.db
