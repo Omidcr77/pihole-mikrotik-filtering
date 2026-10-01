@@ -9,7 +9,18 @@ Runbook for the Pi-hole DNS filtering deployment on a MikroTik network. It recor
 - Two static `pre-hotspot` NAT rules redirect authenticated Hotspot DNS (UDP and TCP port 53) to Pi-hole. They are health-controlled by a 30-second scheduler: three successful DNS checks enable them; two failures disable them so the Hotspot router can answer DNS using its configured upstream resolvers.
 - Office-specific rules remain active. PPPoE redirects remain paused.
 - Port 853 blocking is configured for the Office Hotspot only. DNS over HTTPS on port 443 is not blocked network-wide.
-- The deployment uses one Pi-hole host. The fallback path exists, but a full Pi-hole outage/failover drill and capacity test at peak load have not been recorded.
+- The deployment uses one Pi-hole host. The fallback path exists, but a full Pi-hole outage/failover drill and a synthetic or peak-concurrency capacity test have not been recorded.
+
+## Capacity snapshot (2026-10-01)
+
+The server was observed during normal operation, not under a controlled 3,000-client load test:
+
+- Hardware: Intel Core i5-6500 (4 cores), 7.7 GiB RAM, and a 931.5 GB rotational disk with about 811 GB free.
+- Pi-hole: Core 6.4.3, FTL 6.7.1, Web 6.6; Kali GNU/Linux 2026.3.
+- At the observation: about 43 DNS queries/second, load average below 1, 29.4% memory use in the dashboard, and FTL using about 386 MiB RSS.
+- A 60-second `vmstat` sample showed CPU idle mostly 94–98%, negligible I/O wait, and almost no ongoing swap activity. About 1.4 GiB of swap was allocated/in use, while roughly 5 GiB RAM remained available.
+
+These measurements indicate ample headroom for the observed traffic and make service to 3,000 connected hotspot clients a reasonable expectation. They do not guarantee performance during peak bursts or establish a maximum query rate. Recheck Pi-hole query rate, CPU, memory, swap activity, and I/O wait during the busiest period. The rotational disk has plenty of free space but is the main hardware limitation for database I/O. Pi-hole lists Debian and Ubuntu among supported distributions; Kali works in this deployment but is not listed as an officially supported OS. Consider a supported base OS for a future production rebuild.
 
 ## Documents
 
